@@ -25,16 +25,17 @@
 //! image.remove().expect("Couldn't remove the image");
 //! ```
 use docker::DockerApiError;
+use serde_json::Value;
 use std::collections::HashMap;
 
 use serde_json;
 
 use docker::{get_response_from_api_static, invalid_api_resp, Client, Method};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Port {
     pub PrivatePort: u32,
-    pub PublicPort: u32,
+    pub PublicPort: Option<u32>,
     pub Type: String,
 }
 
@@ -99,7 +100,7 @@ pub struct Container {
     pub State: String,
     pub Status: String,
     pub Ports: Vec<Port>,
-    pub Labels: Option<HashMap<String, String>>,
+    pub Labels: Option<HashMap<String, Value>>,
 
     #[serde(default)]
     pub SizeRw: Option<i64>,
@@ -130,7 +131,9 @@ pub struct ContainerConfig {
     pub WorkingDir: String,
     pub NetworkingDisabled: bool,
     pub MacAddress: String,
-    pub ExposedPorts: Option<HashMap<String, String>>,
+
+    #[serde(default)]
+    pub ExposedPorts: Option<HashMap<String, Value>>,
 }
 
 impl Client for Container {}
