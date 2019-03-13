@@ -18,8 +18,8 @@ fn main () {
         .expect("Cannot pull image");
 
     let cont = Container::new(None, Some("debian".to_owned()))
-        .create(Some("my_debian_cont_name".to_owned()))
-        .expect("Cannot create container".to_owned());
+        .create(Some("my_debian_cont_name".to_owned(), None))
+        .expect("Cannot create container");
 
     // Do your things...
 
@@ -28,4 +28,7 @@ fn main () {
 }
 ```
 
-[WIP]
+## Roadmap
+- [ ] Really simple api for common use cases
+- [ ] Cover complex use cases with custom methods
+- [ ] Allow configurations ala docker compose

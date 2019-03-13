@@ -130,6 +130,7 @@ pub struct ContainerConfig {
     pub WorkingDir: String,
     pub NetworkingDisabled: bool,
     pub MacAddress: String,
+    pub ExposedPorts: Option<HashMap<String, String>>,
 }
 
 impl Client for Container {}
@@ -153,20 +154,25 @@ impl Container {
         let params = Some(params.as_ref());
 
         let conf = match config {
-            Some(conf) => conf,
+            Some(conf) => ContainerConfig {
+                Image: if conf.Image.is_empty() {
+                    self.Image.clone()
+                } else {
+                    conf.Image
+                },
+                ..conf
+            },
             None => ContainerConfig {
                 Image: self.Image.clone(),
                 ..Default::default()
             },
         };
 
-        let body = serde_json::to_string(&conf)
-            .expect("Can't parse container configuration");
+        let body = serde_json::to_string(&conf).expect("Can't parse container configuration");
 
         let body = Some(body.as_ref());
 
-        let res =
-            self.get_response_from_api(endpoint, Method::POST, params, body)?;
+        let res = self.get_response_from_api(endpoint, Method::POST, params, body)?;
 
         if res.status_code != 201 {
             return Err(DockerApiError::InvalidApiResponseError(
@@ -175,20 +181,14 @@ impl Container {
             ));
         }
 
-        serde_json::from_str(&res.body)
-            .map_err(|e| DockerApiError::JsonDeserializationError(e))
+        serde_json::from_str(&res.body).map_err(|e| DockerApiError::JsonDeserializationError(e))
     }
 
     pub fn list() -> Result<Vec<Container>, DockerApiError> {
         let endpoint = "/containers/json";
         let params = "?all=true&size=true";
 
-        let res = get_response_from_api_static(
-            endpoint,
-            Method::GET,
-            Some(params),
-            None,
-        )?;
+        let res = get_response_from_api_static(endpoint, Method::GET, Some(params), None)?;
 
         if res.status_code != 200 {
             return Err(DockerApiError::InvalidApiResponseError(
@@ -197,15 +197,13 @@ impl Container {
             ));
         }
 
-        serde_json::from_str(&res.body)
-            .map_err(|e| DockerApiError::JsonDeserializationError(e))
+        serde_json::from_str(&res.body).map_err(|e| DockerApiError::JsonDeserializationError(e))
     }
 
     fn container_action(&self, action: &str) -> Result<String, DockerApiError> {
         let endpoint = format!("/containers/{}/{}", self.Id, action);
 
-        let res =
-            self.get_response_from_api(&endpoint, Method::POST, None, None)?;
+        let res = self.get_response_from_api(&endpoint, Method::POST, None, None)?;
 
         if res.status_code != 204 {
             return Err(invalid_api_resp(res));
@@ -241,8 +239,7 @@ impl Container {
     pub fn remove(self) -> Result<String, DockerApiError> {
         let endpoint = format!("/containers/{}", self.Id);
 
-        let res =
-            self.get_response_from_api(&endpoint, Method::DELETE, None, None)?;
+        let res = self.get_response_from_api(&endpoint, Method::DELETE, None, None)?;
 
         if res.status_code != 204 {
             return Err(invalid_api_resp(res));
