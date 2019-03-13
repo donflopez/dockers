@@ -2,8 +2,8 @@
 use serde_json;
 use std::collections::HashMap;
 
-use docker::{get_response_from_api_static, invalid_api_resp, Client, Method};
 use docker::DockerApiError;
+use docker::{get_response_from_api_static, invalid_api_resp, Client, Method};
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Image {
@@ -75,13 +75,8 @@ impl Image {
         let params = format!("{}{}{}", param, value, tag);
         let query_params: Option<&str> = Some(&params);
 
-        let res = get_response_from_api_static(
-            api_endpoint,
-            Method::POST,
-            query_params,
-            None,
-        )
-        .unwrap();
+        let res =
+            get_response_from_api_static(api_endpoint, Method::POST, query_params, None).unwrap();
 
         if res.status_code != 200 {
             return Err(invalid_api_resp(res));
@@ -93,46 +88,30 @@ impl Image {
         })
     }
 
-    pub fn pull(
-        image: String,
-        tag: Option<String>,
-    ) -> Result<Image, DockerApiError> {
+    pub fn pull(image: String, tag: Option<String>) -> Result<Image, DockerApiError> {
         Image::create(Source::Image, image, tag)
     }
 
     pub fn list() -> Result<Vec<Image>, DockerApiError> {
         let api_endpoint = "/images/json";
 
-        let res = get_response_from_api_static(
-            api_endpoint,
-            Method::POST,
-            None,
-            None,
-        )
-        .unwrap();
+        let res = get_response_from_api_static(api_endpoint, Method::GET, None, None).unwrap();
 
         if res.status_code != 200 {
             return Err(invalid_api_resp(res));
         }
 
-        serde_json::from_str(&res.body)
-            .map_err(DockerApiError::JsonDeserializationError)
+        serde_json::from_str(&res.body).map_err(DockerApiError::JsonDeserializationError)
     }
 
     pub fn remove(self) -> Result<Vec<DeletedImage>, DockerApiError> {
         let api_endpoint = format!("/images/{}", self.Id);
-        let res = self.get_response_from_api(
-            &api_endpoint,
-            Method::DELETE,
-            None,
-            None,
-        )?;
+        let res = self.get_response_from_api(&api_endpoint, Method::DELETE, None, None)?;
 
         if res.status_code != 200 {
             return Err(invalid_api_resp(res));
         }
 
-        serde_json::from_str(&res.body)
-            .map_err(DockerApiError::JsonDeserializationError)
+        serde_json::from_str(&res.body).map_err(DockerApiError::JsonDeserializationError)
     }
 }

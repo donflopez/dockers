@@ -1,6 +1,6 @@
 [package]
 name = "dockers"
-version = "0.1.0"
+version = "0.1.1"
 description = "A rust docker library"
 license = "MIT"
 authors = ["Francisco López <donflopez@gmail.com>"]
@@ -14,4 +14,4 @@ quick-error = "1.2.2"
 serde_derive = "1.0.89"
 serde = "1.0.89"
 serde_json = "1.0.39"
-curl = "0.4.19"
+curl = "0.4.20"
