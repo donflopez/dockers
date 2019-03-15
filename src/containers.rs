@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-//! Containers is the main structure for handling containers
+//! Containers is all you need for handling them
 //!
 //! You can create an empty container or you can pass the ID of an existing
 //! one or an Image name to create a new one.

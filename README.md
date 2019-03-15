@@ -8,7 +8,7 @@ The main difference with other docker libs is that I didn't see the need of maki
 
 
 ```rust
-extern dockers;
+extern crate dockers;
 
 use dockers::Container;
 use dockers::Image;

@@ -1,3 +1,23 @@
+//! Images is all you need for handling them
+//!
+//! The main use case is pulling an image, using `Image::pull`
+//! but you also can create them from any of the sources listed in the Source structure
+//!
+//! # Example
+//!
+//! ```rust
+//! extern crate dockers;
+//!
+//! use dockers::Image;
+//! use dockers::images::Source;
+//!
+//! let image = Image::pull("centos".to_owned(), None)
+//!     .expect("Image not pulled");
+//!
+//! // Or you can create an image from a repo or src with Image::create(Source::Repo)
+//! image.remove();
+//! ```
+
 #![allow(non_snake_case)]
 use serde_json;
 use std::collections::HashMap;
