@@ -69,7 +69,7 @@ impl Client for Image {}
 ///
 /// use dockers::Image;
 ///
-/// let image = Image::pull("postgres".to_owned(), None)
+/// let image = Image::pull("rust".to_owned(), None)
 ///     .expect("Image not pulled");
 ///
 /// image.remove().expect("Couldn't remove the image");

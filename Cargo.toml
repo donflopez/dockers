@@ -1,6 +1,6 @@
 [package]
 name = "dockers"
-version = "0.1.4"
+version = "0.1.5"
 description = "A rust docker library"
 license = "MIT"
 authors = ["Francisco López <donflopez@gmail.com>"]

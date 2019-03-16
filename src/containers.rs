@@ -40,8 +40,15 @@ pub struct Port {
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
+pub struct PortBinding {
+    pub HostIp: String,
+    pub HostPort: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct HostConfig {
     pub NetworkMode: String,
+    pub PortBindings: Option<HashMap<String, Vec<PortBinding>>>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -134,6 +141,7 @@ pub struct ContainerConfig {
 
     #[serde(default)]
     pub ExposedPorts: Option<HashMap<String, Value>>,
+    pub HostConfig: HostConfig,
 }
 
 impl Client for Container {}

@@ -1,9 +1,12 @@
 extern crate dockers;
 extern crate serde_json;
-use dockers::{containers::ContainerConfig, Container};
+use dockers::{
+    containers::{ContainerConfig, HostConfig, PortBinding},
+    Container,
+};
 
 use serde_json::json;
-use std::collections::HashMap;
+use std::{collections::HashMap, thread, time::Duration};
 
 #[test]
 fn test() {
@@ -22,20 +25,28 @@ fn test() {
 #[test]
 fn create_with_config() {
     let img = "debian:jessie".to_owned();
-    let mut exposed_ports = HashMap::new();
+    let mut published_ports = HashMap::new();
 
-    exposed_ports.insert("22/tcp".to_owned(), json!({}));
+    published_ports.insert(
+        "22/tcp".to_owned(),
+        vec![PortBinding {
+            HostPort: "22".to_owned(),
+            HostIp: "0.0.0.0".to_owned(),
+        }],
+    );
 
     let container_conf = ContainerConfig {
         Image: img.clone(),
-        ExposedPorts: Some(exposed_ports),
+        HostConfig: HostConfig {
+            PortBindings: Some(published_ports),
+            ..Default::default()
+        },
         ..Default::default()
     };
 
     let container = Container::new(None, Some(img))
         .create(Some("my_cont_test_port".to_owned()), Some(container_conf))
         .unwrap();
-    println!("{:?}", container);
 
     let deleted = container.remove().unwrap();
     println!("Container deleted: {:?}", deleted);
