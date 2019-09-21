@@ -1,3 +1,4 @@
+dist: bionic
 language: rust
 rust:
   - stable
@@ -24,6 +25,6 @@ before_install:
   - sudo apt-get install docker-ce
   - cd /home/travis/build/donflopez/dockers
 
-  script:
+script:
   - cargo build --verbose --all
   - sudo ldconfig && cargo test --verbose --all
