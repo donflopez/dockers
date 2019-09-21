@@ -1,4 +1,4 @@
-# Dockers
+# Dockers [![Build Status](https://travis-ci.org/donflopez/dockers.svg?branch=master)](https://travis-ci.org/donflopez/dockers)
 
 > A rust docker library.
 
